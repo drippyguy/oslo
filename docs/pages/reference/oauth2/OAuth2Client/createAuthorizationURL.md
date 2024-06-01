@@ -4,7 +4,7 @@ title: "OAuth2Client.createAuthorizationURL()"
 
 # `OAuth2Client.createAuthorizationURL()`
 
-Creates a new authorization URL. This method only supports `$256` PKCE code challenge method. By default, no scopes are included.
+Creates a new authorization URL. This method supports both `plain` and `S256` PKCE code challenge methods. By default, no scopes are included.
 
 See [`oslo/oauth2`](/reference/oauth2) for a full example. For generating the state and code verifier, see [`generateState()`](/reference/oauth2/generateState) and [`generateCodeVerifier()`](/reference/oauth2/generateCodeVerifier) respectively.
 
@@ -13,6 +13,7 @@ See [`oslo/oauth2`](/reference/oauth2) for a full example. For generating the st
 ```ts
 function createAuthorizationURL(options?: {
 	state?: string;
+	codeChallengeMethod?: "S256" | "plain";
 	codeVerifier?: string;
 	scopes?: string[];
 }): Promise<URL>;
@@ -22,7 +23,8 @@ function createAuthorizationURL(options?: {
 
 - `options`
   - `state`
-  - `codeVerifier`: `S256` code verifier for PKCE flow
+  - `codeVerifier`: Code verifier for PKCE flow
+  - `codeChallengeMethod` (default: `"S256"`): Ignored if `codeVerifier` is undefined
   - `scopes`: An array of scopes
 
 ## Example

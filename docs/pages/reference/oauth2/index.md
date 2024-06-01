@@ -46,7 +46,7 @@ const state = generateState();
 
 const url = await client.createAuthorizationURL({
 	state,
-	scope: ["user:email"]
+	scopes: ["user:email"]
 });
 ```
 
@@ -58,9 +58,10 @@ import { generateState, generateCodeVerifier } from "oslo/oauth2";
 const state = generateState();
 const codeVerifier = generateCodeVerifier();
 
+// S256 method by default
 const url = await client.createAuthorizationURL({
 	state,
-	scope: ["user:email"],
+	scopes: ["user:email"],
 	codeVerifier
 });
 ```

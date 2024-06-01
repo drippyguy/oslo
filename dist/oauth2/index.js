@@ -25,12 +25,22 @@ class OAuth2Client {
             authorizationUrl.searchParams.set("redirect_uri", this.redirectURI);
         }
         if (options?.codeVerifier !== undefined) {
-            const codeChallengeBuffer = await (0, index_js_1.sha256)(new TextEncoder().encode(options.codeVerifier));
-            const codeChallenge = index_js_2.base64url.encode(new Uint8Array(codeChallengeBuffer), {
-                includePadding: false
-            });
-            authorizationUrl.searchParams.set("code_challenge_method", "S256");
-            authorizationUrl.searchParams.set("code_challenge", codeChallenge);
+            const codeChallengeMethod = options?.codeChallengeMethod ?? "S256";
+            if (codeChallengeMethod === "S256") {
+                const codeChallengeBuffer = await (0, index_js_1.sha256)(new TextEncoder().encode(options.codeVerifier));
+                const codeChallenge = index_js_2.base64url.encode(new Uint8Array(codeChallengeBuffer), {
+                    includePadding: false
+                });
+                authorizationUrl.searchParams.set("code_challenge", codeChallenge);
+                authorizationUrl.searchParams.set("code_challenge_method", "S256");
+            }
+            else if (codeChallengeMethod === "plain") {
+                authorizationUrl.searchParams.set("code_challenge", options.codeVerifier);
+                authorizationUrl.searchParams.set("code_challenge_method", "plain");
+            }
+            else {
+                throw new TypeError(`Invalid value for 'codeChallengeMethod': ${codeChallengeMethod}`);
+            }
         }
         return authorizationUrl;
     }
@@ -69,8 +79,11 @@ class OAuth2Client {
                 const encodedCredentials = index_js_2.base64.encode(new TextEncoder().encode(`${this.clientId}:${options.credentials}`));
                 headers.set("Authorization", `Basic ${encodedCredentials}`);
             }
-            else {
+            else if (authenticateWith === "request_body") {
                 body.set("client_secret", options.credentials);
+            }
+            else {
+                throw new TypeError(`Invalid value for 'authenticateWith': ${authenticateWith}`);
             }
         }
         const request = new Request(this.tokenEndpoint, {

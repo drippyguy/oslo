@@ -9,6 +9,7 @@ export declare class OAuth2Client {
     createAuthorizationURL(options?: {
         state?: string;
         codeVerifier?: string;
+        codeChallengeMethod?: "S256" | "plain";
         scopes?: string[];
     }): Promise<URL>;
     validateAuthorizationCode<_TokenResponseBody extends TokenResponseBody>(authorizationCode: string, options?: {
